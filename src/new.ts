@@ -1,0 +1,36 @@
+import { timestamp } from "./time.ts";
+import { getFileInfo } from "./files.ts";
+import { path } from "./deps.ts";
+
+export function newChat(message?: string, location?: string) {
+  let filepath = `chat-${timestamp()}.toml`;
+  const file = getFileInfo(location);
+  if (file.isSome() && location) {
+    const fileInfo = file.unwrap();
+    if (fileInfo.isDirectory) {
+      filepath = path.join(location, filepath);
+    } else if (fileInfo.isFile) {
+      console.error("file already exists:", location);
+      return;
+    }
+    console.error("unable to write file at this location:", location);
+    return;
+  }
+  let content = `model = "gpt-3.5-turbo"
+
+[[messages]]
+role = "system"
+content = "you are helpful, concise expert in many things"
+`;
+  if (message) {
+    content = `${content}
+
+[[messages]]
+role = "user"
+content = """${message}"""
+`;
+  }
+  const encoder = new TextEncoder();
+  const data = encoder.encode(content);
+  Deno.writeFileSync(filepath, data);
+}

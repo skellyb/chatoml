@@ -1,0 +1,6 @@
+{
+	"tasks": {
+		"test": "cd tests && deno test -A && cd ..",
+		"chat": "deno run -A src/main.ts"
+	}
+}

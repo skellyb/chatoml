@@ -1,0 +1,5 @@
+model = "gpt-3.5-turbo"
+
+[[messages]]
+role = "system"
+content = "A brilliant TypeScript testing expert that loves working with Deno"
