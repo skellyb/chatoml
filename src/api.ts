@@ -2,7 +2,7 @@ import { Configuration, Err, Ok, OpenAIApi, type Result, z } from "./deps.ts";
 
 const CompletetionReqBodySchema = z.object({
   model: z.string(),
-  temperature: z.number(),
+  temperature: z.number().optional(),
   messages: z.array(z.object({
     role: z.enum(["system", "user", "assistant"]),
     content: z.string(),
