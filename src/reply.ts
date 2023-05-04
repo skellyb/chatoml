@@ -2,6 +2,9 @@ import { findFile } from "./files.ts";
 import { message } from "./content.ts";
 import { sendChat } from "./send.ts";
 
+/**
+ * Append a user message to chat file, then send for response.
+ */
 export async function replyChat(content?: string, location?: string) {
   if (!content) {
     console.error("no message provided");

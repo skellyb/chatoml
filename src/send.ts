@@ -1,7 +1,7 @@
 import { toml } from "./deps.ts";
 import { findFile } from "./files.ts";
-import { timestamp } from "./time.ts";
 import { getChatCompletion } from "./api.ts";
+import { message } from "./content.ts";
 
 /**
  * Send data to chat completion api.
@@ -23,17 +23,11 @@ export async function sendChat(location?: string) {
     const content = data.choices[0]?.message?.content ?? "";
     const update = message("assistant", content);
     await Deno.writeTextFile(filepath, update, { append: true });
-    console.log("sent");
+    console.log(`
+response:
+${content}
+`);
   } else {
-    console.error("Unable to respond:", res.unwrapErr());
+    console.error("unable to respond:", res.unwrapErr());
   }
-}
-
-function message(role: string, content: string) {
-  return `
-# ${timestamp()}
-[[messages]]
-role = "${role}"
-content = """${content}"""
-`;
 }

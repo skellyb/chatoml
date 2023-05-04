@@ -31,6 +31,9 @@ export function findFile(location?: string): Result<string, string> {
   return Err("no file found");
 }
 
+/**
+ * Returns FileInfo if it exists.
+ */
 export function getFileInfo(path?: string): Option<Deno.FileInfo> {
   if (path) {
     try {

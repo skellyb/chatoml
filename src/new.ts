@@ -2,6 +2,9 @@ import { timestamp } from "./time.ts";
 import { getFileInfo } from "./files.ts";
 import { path } from "./deps.ts";
 
+/**
+ * Create a new chat file with an optional first message.
+ */
 export function newChat(message?: string, location?: string) {
   let filepath = `chat-${timestamp()}.toml`;
   const file = getFileInfo(location);
@@ -25,6 +28,7 @@ content = "you are helpful, concise expert in many things"
   if (message) {
     content = `${content}
 
+# ${timestamp()}
 [[messages]]
 role = "user"
 content = """${message}"""
