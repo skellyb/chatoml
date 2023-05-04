@@ -6,7 +6,11 @@ export {
   CommandGroup,
   string,
 } from "https://deno.land/x/clay@v0.2.5/mod.ts";
-export { Configuration, OpenAIApi } from "npm:openai@3.2.1";
+export {
+  ChatCompletionResponseMessageRoleEnum,
+  Configuration,
+  OpenAIApi,
+} from "npm:openai@3.2.1";
 export {
   Err,
   None,

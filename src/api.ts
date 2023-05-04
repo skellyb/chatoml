@@ -11,10 +11,13 @@ const CompletetionReqBodySchema = z.object({
 
 type CompletetionReqBody = z.infer<typeof CompletetionReqBodySchema>;
 
+// Exposed via const for easier mocking in tests.
+export const api = { getChatCompletion };
+
 /**
  * Validate parsed toml data then send to OpenAI Chat Completion API.
  */
-export async function getChatCompletion(body: unknown) {
+async function getChatCompletion(body: unknown) {
   const reqBody = validateReq(body);
   if (reqBody.isErr()) {
     return Err(reqBody.unwrapErr());

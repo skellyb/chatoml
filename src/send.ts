@@ -1,6 +1,6 @@
 import { toml } from "./deps.ts";
 import { findFile } from "./files.ts";
-import { getChatCompletion } from "./api.ts";
+import { api } from "./api.ts";
 import { message } from "./content.ts";
 
 /**
@@ -17,7 +17,7 @@ export async function sendChat(location?: string) {
   const file = await Deno.readFile(filepath);
   const txt = new TextDecoder().decode(file);
   const body = toml.parse(txt);
-  const res = await getChatCompletion(body);
+  const res = await api.getChatCompletion(body);
   if (res.isOk()) {
     const data = res.unwrap();
     const content = data.choices[0]?.message?.content ?? "";
