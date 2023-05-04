@@ -15,9 +15,12 @@ export function newChat(message?: string, location?: string) {
     } else if (fileInfo.isFile) {
       console.error("file already exists:", location);
       return;
+    } else {
+      console.error("unable to create file here:", location);
+      return;
     }
-    console.error("unable to write file at this location:", location);
-    return;
+  } else if (location) {
+    filepath = path.join(location);
   }
   let content = `model = "gpt-3.5-turbo"
 
