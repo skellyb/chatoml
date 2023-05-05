@@ -1,7 +1,4 @@
-import {
-  assert,
-  assertEquals,
-} from "https://deno.land/std@0.185.0/testing/asserts.ts";
+import { assert, assertEquals } from "./deps.ts";
 import { findFile } from "../src/files.ts";
 
 Deno.test("return latest chat file in current directory", () => {

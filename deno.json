@@ -1,8 +1,8 @@
 {
 	"tasks": {
 		"test": "cd tests && deno test -A && cd ..",
-		"update": "deno cache --lock=deno.lock --lock-write src/deps.ts",
-		"reload": "deno cache --reload --lock=deno.lock src/deps.ts",
+		"update": "deno cache --lock=deno.lock --lock-write src/deps.ts tests/deps.ts",
+		"reload": "deno cache --reload --lock=deno.lock src/deps.ts tests/deps.ts",
 		"chat": "deno run -A src/main.ts"
 	}
 }

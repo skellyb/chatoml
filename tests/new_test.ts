@@ -1,5 +1,4 @@
-import { assertEquals } from "https://deno.land/std@0.185.0/testing/asserts.ts";
-import { FakeTime } from "https://deno.land/std@0.185.0/testing/time.ts";
+import { assertEquals, FakeTime } from "./deps.ts";
 import { newChat } from "../src/new.ts";
 import { timestamp } from "../src/time.ts";
 

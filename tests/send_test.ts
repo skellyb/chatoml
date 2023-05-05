@@ -1,9 +1,8 @@
-import { assertEquals } from "https://deno.land/std@0.185.0/testing/asserts.ts";
-import { stub } from "https://deno.land/std@0.185.0/testing/mock.ts";
-import { FakeTime } from "https://deno.land/std@0.185.0/testing/time.ts";
+import { assertEquals, FakeTime, stub } from "./deps.ts";
+import { ChatCompletionResponseMessageRoleEnum, Ok } from "../src/deps.ts";
 import { api } from "../src/api.ts";
 import { sendChat } from "../src/send.ts";
-import { ChatCompletionResponseMessageRoleEnum, Ok } from "../src/deps.ts";
+import { tempFile } from "./utils.ts";
 
 Deno.test("sendChat should parse chat file, send data to api, and write the response to file", async () => {
   const time = new FakeTime(new Date("February 20, 2020 20:20:20"));
@@ -67,16 +66,3 @@ content = """mock response"""
     temp.remove();
   }
 });
-
-function tempFile(txt: string) {
-  const encoder = new TextEncoder();
-  const data = encoder.encode(txt);
-  const filepath = Deno.makeTempFileSync({ suffix: ".toml" });
-  Deno.writeFileSync(filepath, data);
-  return {
-    path: filepath,
-    remove() {
-      Deno.removeSync(filepath);
-    },
-  };
-}
