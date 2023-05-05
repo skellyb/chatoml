@@ -1,0 +1,184 @@
+model = "gpt-3.5-turbo"
+
+[[messages]]
+role = "system"
+content = "you are helpful, concise expert in many things"
+
+
+# 20230504T130352
+[[messages]]
+role = "user"
+content = """write deno tests for `sendChat` function, mocking the `createChatCompletion` api call:
+
+```
+import { toml } from "./deps.ts";
+import { findFile } from "./files.ts";
+import { message } from "./content.ts";
+import { Configuration, Err, Ok, OpenAIApi, type Result, z } from "./deps.ts";
+
+/**
+ * Send data to chat completion api.
+ */
+export async function sendChat(location?: string) {
+  const filecheck = findFile(location);
+  if (filecheck.isErr()) {
+    console.error("no file found");
+    return;
+  }
+  const filepath = filecheck.unwrap();
+  console.log(`sending: ${filepath}`);
+  const file = await Deno.readFile(filepath);
+  const txt = new TextDecoder().decode(file);
+  const body = toml.parse(txt);
+  const res = await getChatCompletion(body);
+  if (res.isOk()) {
+    const data = res.unwrap();
+    const content = data.choices[0]?.message?.content ?? "";
+    const update = message("assistant", content);
+    await Deno.writeTextFile(filepath, update, { append: true });
+    console.log(`
+response:
+${content}
+`);
+  } else {
+    console.error("unable to respond:", res.unwrapErr());
+  }
+}
+
+const CompletetionReqBodySchema = z.object({
+  model: z.string(),
+  temperature: z.number().optional(),
+  messages: z.array(z.object({
+    role: z.enum(["system", "user", "assistant"]),
+    content: z.string(),
+  })),
+});
+
+type CompletetionReqBody = z.infer<typeof CompletetionReqBodySchema>;
+
+/**
+ * Validate parsed toml data then send to OpenAI Chat Completion API.
+ */
+export async function getChatCompletion(body: unknown) {
+  const reqBody = validateReq(body);
+  if (reqBody.isErr()) {
+    return Err(reqBody.unwrapErr());
+  }
+  const configuration = new Configuration({
+    apiKey: "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",
+  });
+  const openai = new OpenAIApi(configuration);
+  try {
+    const res = await openai.createChatCompletion(reqBody.unwrap());
+    if (res.status === 200 && res.data) {
+      return Ok(res.data);
+    } else {
+      return Err(res.statusText);
+    }
+  } catch (err) {
+    return Err(err.message as string);
+  }
+}
+
+function validateReq(input: unknown): Result<CompletetionReqBody, string> {
+  const parsed = CompletetionReqBodySchema.safeParse(input);
+  if (parsed.success) {
+    return Ok(parsed.data);
+  }
+  return Err(parsed.error.toString());
+}
+```
+
+"""
+
+# 20230504T130709
+[[messages]]
+role = "assistant"
+content = """Here's an example of how to write tests for the `sendChat` function with a mocked `getChatCompletion` function:
+
+```ts
+import { sendChat } from "./sendChat.ts";
+import { assertEquals } from "./deps.ts";
+
+const mockResponse = {
+  choices: [{ message: { content: "Hello! How can I help you today?" } }],
+};
+
+const mockGetChatCompletion = async () => {
+  return {
+    isOk: () => true,
+    unwrap: () => mockResponse,
+  };
+};
+
+Deno.test("sendChat sends file content to chat completion API and updates file with response", async () => {
+  // Mock the `getChatCompletion` function with our mocked response
+  const originalGetChatCompletion = globalThis.getChatCompletion;
+  globalThis.getChatCompletion = mockGetChatCompletion;
+
+  // Create a temporary file and write some content to it
+  const encoder = new TextEncoder();
+  const data = encoder.encode("[messages]\ncontent = \"Hello, world!\"");
+  const filename = await Deno.makeTempFile();
+  await Deno.writeFile(filename, data);
+
+  // Call the `sendChat` function and verify that it writes the API response to the file
+  await sendChat(filename);
+
+  const decoder = new TextDecoder();
+  const fileContents = decoder.decode(await Deno.readFile(filename));
+  assertEquals(fileContents, "[messages]\ncontent = \"Hello, world!\"\n[messages]\ncontent = \"Hello! How can I help you today?\"");
+
+  // Clean up temporary file and restore original function
+  await Deno.remove(filename);
+  globalThis.getChatCompletion = originalGetChatCompletion;
+});
+```
+
+This test creates a temporary file, writes some content to it, mocks the `getChatCompletion` function to return a mocked API response, calls the `sendChat` function with the filename, and then verifies that the function has written the response to the file. Finally, it cleans up the temporary file and restores the original function."""
+
+# 20230504T144352
+[[messages]]
+role = "user"
+content = """can you stub the getChatCompletion function instead using deno's stub function"""
+
+# 20230504T144421
+[[messages]]
+role = "assistant"
+content = """Yes, here's how you can use Deno's `stub` function to stub the `getChatCompletion` function instead of creating a mock function:
+
+```ts
+import { sendChat, getChatCompletion } from "./sendChat.ts";
+import { assertEquals, stub } from "./deps.ts";
+
+Deno.test("sendChat sends file content to chat completion API and updates file with response", async () => {
+  // Create a temporary file and write some content to it
+  const encoder = new TextEncoder();
+  const data = encoder.encode("[messages]\ncontent = \"Hello, world!\"");
+  const filename = await Deno.makeTempFile();
+  await Deno.writeFile(filename, data);
+
+  // Stub the `getChatCompletion` function with a fixed response
+  const mockedResponse = { choices: [{ message: { content: "Hello! How can I help you today?" } }] };
+  const getChatCompletionStub = stub(getChatCompletion, "getChatCompletion").returns({
+    isOk: () => true,
+    unwrap: () => mockedResponse,
+  });
+
+  // Call the `sendChat` function and verify that it writes the API response to the file
+  await sendChat(filename);
+
+  const decoder = new TextDecoder();
+  const fileContents = decoder.decode(await Deno.readFile(filename));
+  assertEquals(
+    fileContents,
+    "[messages]\ncontent = \"Hello, world!\"\n[messages]\ncontent = \"Hello! How can I help you today?\"",
+  );
+
+  // Clean up temporary file and remove the stub
+  await Deno.remove(filename);
+  getChatCompletionStub.restore();
+});
+```
+
+This test is very similar to the previous one, except that instead of creating a mock function for `getChatCompletion`, it uses `stub` to stub the function and return a fixed response. Note that we also need to call the `restore` method on the stub after the test completes to clean up."""

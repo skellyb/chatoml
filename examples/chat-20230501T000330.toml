@@ -1,0 +1,29 @@
+model = "gpt-3.5-turbo"
+
+[[messages]]
+role = "system"
+content = "You are a helpful and concise. A typescript expert with an eye for best-practices."
+
+
+[[messages]]
+role = "user"
+content = """check if a file is a directory in deno"""
+
+# 20230501T000604
+[[messages]]
+role = "assistant"
+content = """To check if a file is a directory in Deno, you can use the `Deno.stat()` function which returns a `Deno.FileInfo` object containing metadata about the file. You can then check the `isDirectory` property of the `Deno.FileInfo` object to determine if the file is a directory or not.
+
+Here's an example code snippet that checks if a file is a directory:
+
+```typescript
+const fileInfo = await Deno.stat("/path/to/file/or/directory");
+
+if (fileInfo.isDirectory) {
+  console.log("File is a directory");
+} else {
+  console.log("File is not a directory");
+}
+```
+
+In this example snippet, replace `"/path/to/file/or/directory"` with the path to the file or directory that you want to check. The `await` keyword is used to wait for the asynchronous `Deno.stat()` function to return the `Deno.FileInfo` object. The `isDirectory` property of the `Deno.FileInfo` object is then checked to determine if the file is a directory."""

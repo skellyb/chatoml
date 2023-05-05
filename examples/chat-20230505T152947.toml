@@ -1,0 +1,34 @@
+model = "gpt-3.5-turbo"
+temperature = 0.5
+
+[[messages]]
+role = "system"
+content = "you are a typescript expert with a focus on clarity and accuracy"
+
+[[messages]]
+role = "user"
+content = "write an intro paragraph for a cli program that manages chatgpt exchanges in flat TOML files."
+
+# 20230505T153135
+[[messages]]
+role = "assistant"
+content = """Introducing our CLI program for managing ChatGPT exchanges in flat TOML files! With this powerful tool, you can easily create, edit, and organize your ChatGPT conversations in a clear and concise format. Whether you're working on a small project or managing a large team, our program provides a simple and efficient way to store and retrieve your chat data. With a focus on clarity and accuracy, our TypeScript expert team has designed this program to meet the needs of developers and non-technical users alike. So why wait? Try our ChatGPT CLI program today and streamline your chat management process!"""
+
+# 20230505T153237
+[[messages]]
+role = "user"
+content = """suggest names for this cli command"""
+
+# 20230505T153243
+[[messages]]
+role = "assistant"
+content = """1. ChatGPT-CLI
+2. ChatTOML
+3. GPT-Chat-Manager
+4. TOML-Chat-CLI
+5. Chat-Exchange-CLI
+6. GPT-Exchange-CLI
+7. TOML-Chat-Manager
+8. Chat-Data-CLI
+9. GPT-Data-Manager
+10. TOML-Chat-Exchange"""
