@@ -2,6 +2,7 @@ import { Command } from "./deps.ts";
 import { sendChat } from "./send.ts";
 import { newChat } from "./new.ts";
 import { replyChat } from "./reply.ts";
+import { modelsList } from "./models.ts";
 
 const newCmd = new Command()
   .arguments("[message:string]")
@@ -47,11 +48,25 @@ const replyCmd = new Command()
     replyChat(openaiApiKey, message, location);
   });
 
+const modelsCmd = new Command()
+  .description(
+    "list available models",
+  )
+  .env(
+    "OPENAI_API_KEY=<value:string>",
+    "OpenAI API keys can be found at https://platform.openai.com/account/api-keys",
+    { required: true },
+  )
+  .action(({ openaiApiKey }) => {
+    modelsList(openaiApiKey);
+  });
+
 await new Command()
   .name("ChaTOML")
   .description("TOML client for OpenAI Chat Completion API")
   .usage("<command> [options]")
   .command("new", newCmd)
   .command("send", sendCmd)
-  .command("replay", replyCmd)
+  .command("reply", replyCmd)
+  .command("models", modelsCmd)
   .parse(Deno.args);
