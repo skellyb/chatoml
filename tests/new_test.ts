@@ -3,7 +3,7 @@ import { newChat } from "../src/new.ts";
 import { timestamp } from "../src/time.ts";
 
 Deno.test("create new chat in current directory with timestamp filename", () => {
-  const time = new FakeTime(new Date("February 20, 2020 20:20:20"));
+  const time = new FakeTime(new Date(Date.UTC(2020, 1, 20, 20, 20, 20)));
   const ts = timestamp(new Date());
   const path = `chat-${ts}.toml`;
   try {
@@ -32,7 +32,7 @@ content = """testing"""
 });
 
 Deno.test("create new chat at location with default timestamped filename", () => {
-  const time = new FakeTime(new Date("February 20, 2020 20:20:20"));
+  const time = new FakeTime(new Date(Date.UTC(2020, 1, 20, 20, 20, 20)));
   const ts = timestamp(new Date());
   const path = `chats/chat-${ts}.toml`;
   try {
@@ -61,7 +61,7 @@ content = """testing"""
 });
 
 Deno.test("create new chat at location with provided filename without a message", () => {
-  const time = new FakeTime(new Date("February 20, 2020 20:20:20"));
+  const time = new FakeTime(new Date(Date.UTC(2020, 1, 20, 20, 20, 20)));
   const path = `./chats/test-chat.toml`;
   try {
     newChat(undefined, path);

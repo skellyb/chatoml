@@ -5,7 +5,7 @@ import { sendChat } from "../src/send.ts";
 import { tempFile } from "./utils.ts";
 
 Deno.test("sendChat should parse chat file, send data to api, and write the response to file", async () => {
-  const time = new FakeTime(new Date("February 20, 2020 20:20:20"));
+  const time = new FakeTime(new Date(Date.UTC(2020, 1, 20, 20, 20, 20)));
   const openAiApiStub = stub(
     api,
     "getChatCompletion",
@@ -54,7 +54,7 @@ content = "testing assistant"
 role = "user"
 content = """mock message"""
 
-# 20200221T012020
+# 20200220T202020
 [[messages]]
 role = "assistant"
 content = """mock response"""
