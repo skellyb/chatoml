@@ -38,7 +38,7 @@ content = """mock message"""
 `);
 
   try {
-    await sendChat(temp.path);
+    await sendChat("api-key", temp.path);
     const file = Deno.readFileSync(temp.path);
     const modified = new TextDecoder().decode(file);
     assertEquals(

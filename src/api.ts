@@ -17,14 +17,12 @@ export const api = { getChatCompletion };
 /**
  * Validate parsed toml data then send to OpenAI Chat Completion API.
  */
-async function getChatCompletion(body: unknown) {
+async function getChatCompletion(body: unknown, apiKey: string) {
   const reqBody = validateReq(body);
   if (reqBody.isErr()) {
     return Err(reqBody.unwrapErr());
   }
-  const configuration = new Configuration({
-    apiKey: "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",
-  });
+  const configuration = new Configuration({ apiKey });
   const openai = new OpenAIApi(configuration);
   try {
     const res = await openai.createChatCompletion(reqBody.unwrap());

@@ -6,7 +6,7 @@ import { message } from "./content.ts";
 /**
  * Send data to chat completion api.
  */
-export async function sendChat(location?: string) {
+export async function sendChat(apiKey: string, location?: string) {
   const filecheck = findFile(location);
   if (filecheck.isErr()) {
     console.error("no file found");
@@ -17,7 +17,7 @@ export async function sendChat(location?: string) {
   const file = await Deno.readFile(filepath);
   const txt = new TextDecoder().decode(file);
   const body = toml.parse(txt);
-  const res = await api.getChatCompletion(body);
+  const res = await api.getChatCompletion(body, apiKey);
   if (res.isOk()) {
     const data = res.unwrap();
     const content = data.choices[0]?.message?.content ?? "";

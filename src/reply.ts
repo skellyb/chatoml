@@ -5,7 +5,11 @@ import { sendChat } from "./send.ts";
 /**
  * Append a user message to chat file, then send for response.
  */
-export async function replyChat(content?: string, location?: string) {
+export async function replyChat(
+  apiKey: string,
+  content?: string,
+  location?: string,
+) {
   if (!content) {
     console.error("no message provided");
     return;
@@ -18,5 +22,5 @@ export async function replyChat(content?: string, location?: string) {
   const filepath = filecheck.unwrap();
   const update = message("user", content ?? "");
   await Deno.writeTextFile(filepath, update, { append: true });
-  await sendChat(filepath);
+  await sendChat(apiKey, filepath);
 }

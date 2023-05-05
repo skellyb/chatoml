@@ -43,7 +43,7 @@ content = """first mock response"""
 `);
 
   try {
-    await replyChat("reply", temp.path);
+    await replyChat("api-key", "reply", temp.path);
     const file = Deno.readFileSync(temp.path);
     const modified = new TextDecoder().decode(file);
     assertEquals(

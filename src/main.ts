@@ -1,68 +1,57 @@
-import { Command, CommandGroup, string } from "./deps.ts";
+import { Command } from "./deps.ts";
 import { sendChat } from "./send.ts";
 import { newChat } from "./new.ts";
 import { replyChat } from "./reply.ts";
 
-const configCmd = new Command(
-  "create a new config file with your OpenAI API key",
-)
-  .required(string, "key")
-  .optional(string, "location", {
-    flags: ["location", "l"],
-    description: "path to file",
+const newCmd = new Command()
+  .arguments("[message:string]")
+  .description("create a new chat file in current directory by default")
+  .option(
+    "-l, --location <path:string>",
+    "directory or full filepath for new chat file",
+  )
+  .action(({ location }, message) => {
+    newChat(message, location);
   });
-const newCmd = new Command("create new chat file").optional(string, "message")
-  .optional(
-    string,
-    "location",
-    {
-      flags: ["location", "l"],
-      description: "path to file",
-    },
-  );
-const sendCmd = new Command("send updated messages (latest file by default)")
-  .optional(string, "location", {
-    flags: ["location", "l"],
-    description: "path to file",
+
+const sendCmd = new Command()
+  .description("send latest chat file in current directory by default")
+  .option(
+    "-l, --location <path:string>",
+    "directory or full filepath of existing chat file",
+  )
+  .env(
+    "OPENAI_API_KEY=<value:string>",
+    "OpenAI API keys can be found at https://platform.openai.com/account/api-keys",
+    { required: true },
+  )
+  .action(({ location, openaiApiKey }) => {
+    sendChat(openaiApiKey, location);
   });
-const replyCmd = new Command(
-  "add message ongoing chat and send (latest file by default)",
-)
-  .required(
-    string,
-    "message",
-  ).optional(string, "location", {
-    flags: ["location", "l"],
-    description: "path to file",
+
+const replyCmd = new Command()
+  .arguments("[message:string]")
+  .description(
+    "add message to existing chat file in current directory and send it",
+  )
+  .option(
+    "-l, --location <path:string>",
+    "directory or full filepath of existing chat file",
+  )
+  .env(
+    "OPENAI_API_KEY=<value:string>",
+    "OpenAI API keys can be found at https://platform.openai.com/account/api-keys",
+    { required: true },
+  )
+  .action(({ location, openaiApiKey }, message) => {
+    replyChat(openaiApiKey, message, location);
   });
-const cmds = new CommandGroup("ChaTOML").subcommand("config", configCmd)
-  .subcommand("new", newCmd).subcommand(
-    "send",
-    sendCmd,
-  ).subcommand(
-    "reply",
-    replyCmd,
-  );
 
-type CmdMap = { [k: string]: (flags?: Record<string, string>) => void };
-const subcommands: CmdMap = {
-  config(flags) {
-    // TODO: setup config command
-  },
-  new(flags) {
-    newChat(flags?.message, flags?.location);
-  },
-  send(flags) {
-    // TODO: find config creds, prompt if not found
-    sendChat(flags?.location);
-  },
-  reply(flags) {
-    replyChat(flags?.message, flags?.location);
-  },
-};
-
-const input = cmds.run();
-
-// TODO: find more type-safe way to handle this -- enum?
-const [subcmd] = Object.keys(input);
-subcommands[subcmd](input[subcmd]);
+await new Command()
+  .name("ChaTOML")
+  .description("TOML client for OpenAI Chat Completion API")
+  .usage("<command> [options]")
+  .command("new", newCmd)
+  .command("send", sendCmd)
+  .command("replay", replyCmd)
+  .parse(Deno.args);
